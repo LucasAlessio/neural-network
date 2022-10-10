@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState, PureComponent } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useNeuralNetwork } from "../../hooks/useNeuralNetwork";
 import { LayerContainer, NetworkContainer, PerceptronContainer, WeightsContainer } from "./styles";
 
@@ -22,7 +22,7 @@ type WeightsListProps = {
 };
 
 export function Network() {
-	const { network, mount, isTraining, start, pause, epochs } = useNeuralNetwork();
+	const { network, mount, isTraining, start, pause, epochs, chartData } = useNeuralNetwork();
 	const [activePerceptron, setActive] = useState<[null, null] | [number, number]>([null, null]);
 	const [showNetwork, setShowNetwork] = useState(false);
 
@@ -76,38 +76,27 @@ export function Network() {
 
 			<span>Épocas: { epochs }</span>
 
-
-			{/* <ResponsiveContainer width="500" height="300"> */}
-				<LineChart
-					width={500}
-					height={300}
-					data={[{
-						name: 'Page A',
-						uv: 4000,
-						pv: 2400,
-						amt: 2400,
-					},
-					{
-						name: 'Page B',
-						uv: 3000,
-						pv: 1398,
-						amt: 2210,
-					}]}
-					margin={{
-						top: 5,
-						right: 30,
-						left: 20,
-						bottom: 5,
-					}}>
-					<CartesianGrid strokeDasharray="3 3" />
-					<XAxis dataKey="name" />
-					<YAxis />
-					<Tooltip />
-					<Legend />
-					<Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-					<Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-				</LineChart>
-			{/* </ResponsiveContainer> */}
+			<div style={{ width: "500px", height: "300px", border: "1px solid red" }}>
+				<ResponsiveContainer width="100%">
+					<LineChart
+						width={ 500 }
+						height={ 300 }
+						data={ chartData }
+						margin={{
+							top: 5,
+							right: 30,
+							left: 20,
+							bottom: 5,
+						}}>
+						<CartesianGrid strokeDasharray="3 3" />
+						<XAxis dataKey="name" />
+						<YAxis />
+						<Tooltip />
+						<Legend />
+						<Line type="monotone" dataKey="summation" stroke="#8884d8" activeDot={{ r: 8 }} isAnimationActive={ false } />
+					</LineChart>
+				</ResponsiveContainer>
+			</div>
 		</>
 	);
 }
