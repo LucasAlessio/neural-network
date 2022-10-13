@@ -1,17 +1,9 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { useNeuralNetwork } from "../../hooks/useNeuralNetwork";
 import { LayerContainer, NetworkContainer, PerceptronContainer, WeightsContainer } from "./styles";
 
 import { faAtom, faRightLong, faWeightHanging } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-//eslint-disable-next-line
-//import trainData from "../../dataset/train.json";
-
-//eslint-disable-next-line
-//import testData from "../../dataset/train.json";
 
 type WeightsListProps = {
 	layer: number,
@@ -22,17 +14,18 @@ type WeightsListProps = {
 };
 
 export function Network() {
-	const { network, mount, isTraining, start, pause, epochs, chartData } = useNeuralNetwork();
+	const { network, isTraining, start, pause, setViewNetwork } = useNeuralNetwork();
 	const [activePerceptron, setActive] = useState<[null, null] | [number, number]>([null, null]);
 	const [showNetwork, setShowNetwork] = useState(false);
 
-	useEffect(() => {
-		mount();
-		//eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
 	function handleViewWeights(isActivePerceptron: boolean, indexLayer: number, indexPerceptron: number) {
-		isActivePerceptron ? setActive([null, null]) : setActive([indexLayer, indexPerceptron]);
+		if (isActivePerceptron) {
+			setActive([null, null]);
+			setViewNetwork(false);
+		} else {
+			setActive([indexLayer, indexPerceptron]);
+			setViewNetwork(true);
+		}
 	}
 
 	return (
@@ -57,10 +50,9 @@ export function Network() {
 									);
 								}) }
 							</LayerContainer>
-							<WeightsContainer>
-								{/*@ts-ignore*/}
+							{ indexLayer < network.length - 1 && <WeightsContainer>
 								{ activePerceptron[0] === indexLayer && <WeightsList layer={activePerceptron[0]} perceptron={activePerceptron[1]} />}
-							</WeightsContainer>
+							</WeightsContainer> }
 						</Fragment>
 					);
 				}) }
@@ -72,30 +64,6 @@ export function Network() {
 
 			<div>
 				<button onClick={() => { setShowNetwork(old => !old); if (showNetwork) console.log(network); } }> { showNetwork ? 'mostrar' : 'ocultar' } </button>
-			</div>
-
-			<span>Épocas: { epochs }</span>
-
-			<div style={{ width: "500px", height: "300px", border: "1px solid red" }}>
-				<ResponsiveContainer width="100%">
-					<LineChart
-						width={ 500 }
-						height={ 300 }
-						data={ chartData }
-						margin={{
-							top: 5,
-							right: 30,
-							left: 20,
-							bottom: 5,
-						}}>
-						<CartesianGrid strokeDasharray="3 3" />
-						<XAxis dataKey="name" />
-						<YAxis />
-						<Tooltip />
-						<Legend />
-						<Line type="monotone" dataKey="summation" stroke="#8884d8" activeDot={{ r: 8 }} isAnimationActive={ false } />
-					</LineChart>
-				</ResponsiveContainer>
 			</div>
 		</>
 	);
@@ -111,7 +79,10 @@ function WeightsList({ layer, perceptron }: WeightsListProps) {
 	return <ul>
 		{ network[layer][perceptron].weights.map((weight, index) => {
 			return (
-				<li key={ index }><FontAwesomeIcon icon={faWeightHanging} /> { weight } <FontAwesomeIcon icon={faRightLong} /></li>
+				<li key={ index }>
+					<span><FontAwesomeIcon icon={faWeightHanging} /> { weight }</span>
+					<span><FontAwesomeIcon icon={faRightLong} /></span>
+				</li>
 			);
 		}) }
 		

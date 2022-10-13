@@ -1,4 +1,4 @@
-import { Network } from "./components/Network";
+import { Page } from "./components/Page";
 import { GlobalStyle } from "./styles/global";
 
 export function App() {
@@ -6,7 +6,7 @@ export function App() {
 		<>
 			<GlobalStyle />
 			<div className="App">
-				<Network />
+				<Page />
 			</div>
 		</>
 	);

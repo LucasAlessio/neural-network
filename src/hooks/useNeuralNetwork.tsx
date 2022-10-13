@@ -1,13 +1,15 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react"
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react"
 import { Perceptron } from "../classes/Perceptron";
-
-import trainData from "../dataset/test.json";
 import { ClassEnum } from "../enums/ClassEnum";
 import { LayerTypeEnum } from "../enums/LayerTypeEnum";
-import { useFormConfig } from "./useFormConfig";
+
+import trainData from "../dataset/test.json";
 
 type NeuralNetworkData = {
 	network: Perceptron[][],
+	config: any,
+	setConfig: (arg: any) => void,
+	setViewNetwork: (arg: boolean) => void,
 	epochs: number,
 	isTraining: boolean,
 	mount: () => void,
@@ -18,38 +20,45 @@ type NeuralNetworkData = {
 
 type ChartData = {
 	epoch: number,
-	summation: number,
+	errors: number,
 }[];
-
-const config = {
-	layers: [
-		{ type: LayerTypeEnum.INPUT, perceptrons: 18 },
-		{ type: LayerTypeEnum.HIDDEN, perceptrons: 14 },
-		{ type: LayerTypeEnum.OUTPUT, perceptrons: 7 },
-	],
-	learning_rate: 0.02,
-};
 
 const NeuralNetworkContext = createContext<NeuralNetworkData>({} as NeuralNetworkData);
 
 export function NeuralNetworkProvider({ children }: { children: React.ReactNode }) {
-	const [network, setNetwork] = useState<Perceptron[][]>([])
-	const [epochs, setEpochs] = useState<number>(0);
+	const [config, setConfig] = useState({
+		layers: [
+			{ type: LayerTypeEnum.INPUT, perceptrons: 18 },
+			{ type: LayerTypeEnum.HIDDEN, perceptrons: 14 },
+			{ type: LayerTypeEnum.OUTPUT, perceptrons: 7 },
+		],
+		learning_rate: 0.02,
+	});
+
+	const [network, setNetwork] = useState<Perceptron[][]>([]);
+	const [viewNetwork, setViewNetwork] = useState<boolean>(false);
 	const [isTraining, setIsTraining] = useState<boolean>(false);
+
+	const internalNetwork = useRef<Perceptron[][]>([]);
+
+	const [epochs, setEpochs] = useState<number>(0);
 	const [executions, setExecutions] = useState<number>(0);
 	const [chartData, setChartData] = useState<ChartData>([]);
 
 	const currentIndex = useRef<number>(0);
-	const errorSummation = useRef<number>(0);
-	const bigOut = useRef<number>(-1);
-	const pOut = useRef<number>(-1);
+	const errorsAmount = useRef<number>(0);
+	const biggestOutput = useRef<number>(-1);
+	const perceptronOutput = useRef<number>(-1);
 
-	function mount() {
+	const mount = useCallback(() => {
 		const newNetwork: Perceptron[][] = [];
+
 		config.layers.forEach((value, index) => {
 			const layer: Perceptron[] = [];
+
 			for (let i = 0; i < value.perceptrons; i++) {
 				const perceptron = new Perceptron({ type: value.type });
+
 				if (index < config.layers.length - 1) {
 					// Instancia os pesos das conexões para a primeira camada com a segunda
 					perceptron.weights = Array.from({ length: config.layers[index + 1].perceptrons }, Math.random);
@@ -71,15 +80,23 @@ export function NeuralNetworkProvider({ children }: { children: React.ReactNode 
 					//@ts-ignore
 					//perceptron.weights = setweights[index][i] ?? [];
 				}
+
 				layer.push(perceptron);
 			}
+
 			newNetwork.push(layer);
 		});
-		setNetwork(newNetwork);
-	}
 
-	function train() {
-		const newNetwork = [...network];
+		currentIndex.current = 0;
+		internalNetwork.current = newNetwork;
+
+		setNetwork(newNetwork);
+		setChartData([]);
+		setEpochs(0);
+	}, [config.layers]);
+
+	const train = useCallback(() => {
+		const newNetwork = [...internalNetwork.current];
 
 		Object.entries(trainData[currentIndex.current]).forEach(([attribute, value], index) => {
 			if (attribute === "CLASS") {
@@ -154,18 +171,18 @@ export function NeuralNetworkProvider({ children }: { children: React.ReactNode 
 
 		// console.log("atualizacao pesos", newNetwork);
 
-		pOut.current = -1;
-		bigOut.current = 0;
+		perceptronOutput.current = -1;
+		biggestOutput.current = 0;
 
 		newNetwork[config.layers.length - 1].forEach((perceptron, indexPerceptron) => {
-			if (pOut.current < 0 || perceptron.output > bigOut.current) {
-				pOut.current = indexPerceptron;
-				bigOut.current = perceptron.output;
+			if (perceptronOutput.current < 0 || perceptron.output > biggestOutput.current) {
+				perceptronOutput.current = indexPerceptron;
+				biggestOutput.current = perceptron.output;
 			}
 		});
 
-		if (newNetwork[config.layers.length - 1][pOut.current].expectedOutput === 0) {
-			errorSummation.current += 1;
+		if (newNetwork[config.layers.length - 1][perceptronOutput.current].expectedOutput === 0) {
+			errorsAmount.current += 1;
 		}
 
 		newNetwork.forEach((layer, indexLayer) => {
@@ -175,7 +192,11 @@ export function NeuralNetworkProvider({ children }: { children: React.ReactNode 
 		});
 
 
-		setNetwork(newNetwork);
+		internalNetwork.current = newNetwork;
+
+		if (viewNetwork) {
+			setNetwork(newNetwork);
+		}
 
 		currentIndex.current++;
 		currentIndex.current %= trainData.length;
@@ -185,22 +206,27 @@ export function NeuralNetworkProvider({ children }: { children: React.ReactNode 
 				...chartData,
 				{
 					epoch: epochs,
-					summation: errorSummation.current,
+					errors: errorsAmount.current,
 				}
 			]);
 
-			errorSummation.current = 0;
+			errorsAmount.current = 0;
 			setEpochs(old => ++old);
 		}
-	}
+	}, [chartData, config.layers.length, config.learning_rate, epochs, viewNetwork]);
 
-	function start() {
+	const start = useCallback(() => {
 		setIsTraining(true);
-	}
+	}, []);
 
-	function pause() {
+	const pause = useCallback(() => {
 		setIsTraining(false);
-	}
+	}, []);
+
+	useEffect(() => {
+		mount();
+		//eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [config.layers]);
 
 	useEffect(() => {
 		if (!isTraining || !network) {
@@ -220,6 +246,11 @@ export function NeuralNetworkProvider({ children }: { children: React.ReactNode 
 	return <NeuralNetworkContext.Provider value={
 		{
 			network,
+			config,
+			setConfig: function(config) {
+				setConfig(config);
+			},
+			setViewNetwork,
 			epochs,
 			isTraining,
 			mount,

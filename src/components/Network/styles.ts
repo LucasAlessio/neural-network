@@ -1,32 +1,26 @@
 import styled from "styled-components";
 
 export const NetworkContainer = styled.div`
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	align-items: center;
+	display: table;
+	width: 100%;
+	table-layout: fixed;
 `;
 
 export const LayerContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-
-	/* border: 1px solid red; */
-
+	width: 50px;
+	display: table-cell;
+	vertical-align: middle;
 	padding: 5px;
-	/* border-radius: 40px; */
-
+	
 	& + & {
 		margin-left: 150px;
 	}
+
 `;
 
 export const WeightsContainer = styled.div`
-	align-self: stretch;
-	width: 300px;
-	padding: 0;
+	display: table-cell;
+	vertical-align: middle;
 
 	ul {
 		display: flex;
@@ -42,22 +36,36 @@ export const WeightsContainer = styled.div`
 
 		li {
 			line-height: 2rem;
-			margin: 5px 0;
+			display: table;
+			width: 100%;
+			table-layout: fixed;
+			margin: 6px 0;
+
+			span {
+				display: table-cell;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+
+				&:last-child {
+					width: 18px;
+				}
+			}
 		}
 	}
 `;
 
 export const PerceptronContainer = styled.div`
-	color: #ffc778;
+	color: #558aab;
 	display: flex;
-	margin: 5px;
+	margin: 12px 0;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
 
 	&.active {
 		position: relative;
-		color: #bfd1e4;
+		color: #4b7b99;
 
 		/* &::before {
 			content: " ";

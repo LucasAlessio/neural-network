@@ -1,24 +1,24 @@
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
-import { LayerTypeEnum } from "../enums/LayerTypeEnum";
 
-type ConfigForm = {
-	layers: {
-		type: typeof LayerTypeEnum[keyof typeof LayerTypeEnum],
+export type ConfigForm = {
+	nMiddleLayers: number,
+	middleLayers: {
 		perceptrons: number,
 	}[],
 	learning_rate: number,
 }
 
+const defaultValuesForm: ConfigForm = {
+	nMiddleLayers: 1,
+	middleLayers: [
+		{ perceptrons: 14 },
+	],
+	learning_rate: 0.02,
+}
+
 export function FormConfigProvider({ children }: { children: React.ReactNode }) {
 	const form = useForm<ConfigForm>({ 
-		defaultValues: {
-			layers: [
-				{ type: LayerTypeEnum.INPUT, perceptrons: 18 },
-				{ type: LayerTypeEnum.HIDDEN, perceptrons: 14 },
-				{ type: LayerTypeEnum.OUTPUT, perceptrons: 7 },
-			],
-			learning_rate: 0.02,
-		},
+		defaultValues: defaultValuesForm,
 	});
 
 	return (

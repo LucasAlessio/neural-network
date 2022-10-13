@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { App } from './App';
+import { FormConfigProvider } from './hooks/useFormConfig';
 import { NeuralNetworkProvider } from './hooks/useNeuralNetwork';
 
 const root = ReactDOM.createRoot(
@@ -10,7 +11,9 @@ const root = ReactDOM.createRoot(
 root.render(
 	<React.StrictMode>
 		<NeuralNetworkProvider>
-			<App />
+			<FormConfigProvider>
+				<App />
+			</FormConfigProvider>
 		</NeuralNetworkProvider>
 	</React.StrictMode>
 );
