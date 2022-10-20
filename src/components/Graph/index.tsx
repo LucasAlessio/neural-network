@@ -32,7 +32,14 @@ export function Graph() {
 				</LineChart>
 			</ResponsiveContainer>
 
-			<p className="mt-5 text-center text-muted">Epochs: { epochs }</p>
+			<table className="table table-bordered table-striped table-sm mt-3">
+				<tbody>
+					<tr>
+						<th className="text-muted">Epochs</th>
+						<td className="text-end">{ epochs }</td>
+					</tr>
+				</tbody>
+			</table>
 		</>
 	)
 }

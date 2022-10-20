@@ -10,7 +10,7 @@ export const ClassEnum = {
 
 export function getClassEnumDefinitions(): Record<typeof ClassEnum[keyof typeof ClassEnum], string> {
 	return {
-		[ClassEnum.BRICKFACE]: "Brick Face",
+		[ClassEnum.BRICKFACE]: "Brickface",
 		[ClassEnum.SKY]: "Sky",
 		[ClassEnum.FOLIAGE]: "Foliage",
 		[ClassEnum.CEMENT]: "Cement",

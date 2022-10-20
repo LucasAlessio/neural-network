@@ -21,11 +21,13 @@ export function Page() {
 								</div>
 							</div>
 							<div className="col-12 col-md-4">
-								<div className="mb-5">
+								<div className="mb-4">
 									<Graph />
 								</div>
-								<div className="mb-5">
+								<div className="mb-4">
 									<ConfusionMatrix />
+								</div>
+								<div className="mb-4">
 									<ClassificationReport />
 								</div>
 							</div>

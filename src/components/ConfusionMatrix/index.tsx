@@ -18,21 +18,23 @@ export function ConfusionMatrix() {
 				</SButton>
 			</div>
 
-			{ !!confusionMatrix && <table className="table table-bordered table-striped table-sm">
-				<tbody>
-					{ confusionMatrix.map((linha, indexLinha) => {
-						return (
-							<tr key={`l${indexLinha}`}>
-								{ linha.map((coluna, indexColuna) => {
-									return (
-										<td key={`l${indexColuna}`} className="text-center">{ coluna }</td>
-									);
-								}) }
-							</tr>
-						)
-					}) }
-				</tbody>
-			</table> }
+			{ !!confusionMatrix && (
+				<table className="table table-bordered table-striped table-sm">
+					<tbody>
+						{ confusionMatrix.map((linha, indexLinha) => {
+							return (
+								<tr key={`l${indexLinha}`}>
+									{ linha.map((coluna, indexColuna) => {
+										return (
+											<td key={`l${indexColuna}`} className="text-center">{ coluna }</td>
+										);
+									}) }
+								</tr>
+							)
+						}) }
+					</tbody>
+				</table>
+			) }
 		</div>
 	);
 }
