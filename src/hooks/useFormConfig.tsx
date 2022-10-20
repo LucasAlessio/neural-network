@@ -13,7 +13,7 @@ const defaultValuesForm: ConfigForm = {
 	middleLayers: [
 		{ perceptrons: 14 },
 	],
-	learning_rate: 0.02,
+	learning_rate: 0.3,
 }
 
 export function FormConfigProvider({ children }: { children: React.ReactNode }) {

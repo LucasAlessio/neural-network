@@ -8,14 +8,16 @@ import { SButton } from "../Form/SButton";
 import { Path } from "react-hook-form";
 import { NumberContainer, PerceptronsSelectorContainer } from "./styles";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMinusCircle, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import { faMinusCircle, faPause, faPlay, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import { SSelect } from "../Form/SSelect";
 
 const ConfigInputLayer = { type: LayerTypeEnum.INPUT, perceptrons: 18 };
 const ConfigOutputLayer = { type: LayerTypeEnum.OUTPUT, perceptrons: 7 };
 
 export function Config() {
 	const { register, watch, getValues, setValue } = useFormConfig();
-	const { config, setConfig, isTraining } = useNeuralNetwork();
+	const { config, setConfig, isTraining, start, pause } = useNeuralNetwork();
+
 	
 	const nLayers = Number(watch("nMiddleLayers", 1));
 
@@ -81,32 +83,53 @@ export function Config() {
 
 	return (
 		<>
-			<select {...register("learning_rate", { onChange() {
-				setConfig({
-					...config,
-					learning_rate: Number(watch("learning_rate")),
-				})
-			} })}>
-				<option value={0.01}>0,01</option>
-				<option value={0.02}>0,02</option>
-				<option value={0.03}>0,03</option>
-				<option value={0.1}>0,1</option>
-				<option value={0.2}>0,2</option>
-				<option value={0.3}>0,3</option>
-			</select>
-
-			<div style={{ maxWidth: 220 }}>
-				<SSlider
-					defaultValue={1}
-					min={1}
-					max={3}
-					step={1}
-					label="Hidden layers"
-					disabled={isTraining}
-					onChange={(event, newValue) => {
-						setValue("nMiddleLayers", newValue as number);
-						handleChangeLayers();
-					}} />
+			<div className="row mb-5 row flex-row justify-content-between">
+				<div className="col-6 col-sm-auto mb-4 mb-sm-0">
+					<SButton variant={ isTraining ? "outlined" : "contained" } onClick={ () => isTraining ? pause() : start() }>
+						{ isTraining ? (
+							<>
+								<FontAwesomeIcon icon={faPause} />&nbsp;Pause
+							</>
+						) : (
+							<>
+								<FontAwesomeIcon icon={faPlay} />&nbsp;Train
+							</>
+						) }
+					</SButton>
+				</div>
+				
+				<div className="col-6 col-sm-auto mb-4 mb-sm-0">
+					<SSelect label="Learning rate" options={{
+							"0.01": "0,01",
+							"0.02": "0,02",
+							"0.03": "0,03",
+							"0.1": "0,1",
+							"0.2": "0,2",
+							"0.3": "0,3",
+						}}
+						{...register("learning_rate", { onChange() {
+							setConfig({
+								...config,
+								learning_rate: Number(watch("learning_rate")),
+							})
+						} })}
+						value={ getValues("learning_rate") }
+						disabled={isTraining} />
+				</div>
+				
+				<div className="col-12 col-sm-auto">
+					<SSlider
+						defaultValue={1}
+						min={1}
+						max={3}
+						step={1}
+						label="Hidden layers"
+						disabled={isTraining}
+						onChange={(event, newValue) => {
+							setValue("nMiddleLayers", newValue as number);
+							handleChangeLayers();
+						}} />
+				</div>
 			</div>
 
 			<PerceptronsSelectorContainer>

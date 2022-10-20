@@ -1,26 +1,38 @@
-import { padding } from "@mui/system";
+import { ClassificationReport } from "../ClassificationReport";
 import { Config } from "../Config";
+import { ConfusionMatrix } from "../ConfusionMatrix";
 import { Graph } from "../Graph";
 import { Network } from "../Network";
-import { BigCol, Cols, Container, SmallCol } from "./styles";
+import { Container } from "./styles";
 
 export function Page() {
 	return (
 		<Container>
-			<Cols>
-				<BigCol>
-					<Config />
-					<Network />
-				</BigCol>
-				<SmallCol>
-					<Graph />
-
-					<div style={{ marginTop: "50px" }}>
-						<p>Matriz de confusão (em breve:)</p>
-						<div style={{ border: "1px dotted #000", padding: "80% 0 0 0" }}></div>
+			<div className="container container-fluid">
+				<div className="row justify-content-md-center">
+					<div className="col-12 col-lg-10">
+						<div className="row">
+							<div className="col-md-7">
+								<div className="mb-3">
+									<Config />
+								</div>
+								<div className="mb-3">
+									<Network />
+								</div>
+							</div>
+							<div className="col-12 col-md-4">
+								<div className="mb-5">
+									<Graph />
+								</div>
+								<div className="mb-5">
+									<ConfusionMatrix />
+									<ClassificationReport />
+								</div>
+							</div>
+						</div>
 					</div>
-				</SmallCol>
-			</Cols>
+				</div>
+			</div>
 		</Container>
 	);
 }

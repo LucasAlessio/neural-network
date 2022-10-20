@@ -2,7 +2,7 @@ import { Slider, Typography } from '@mui/material';
 import { styled as styledMui } from '@mui/material/styles';
 import styled from 'styled-components';
 
-interface SSliderProps {
+interface SSliderProps extends Omit<React.HTMLAttributes<HTMLElement>, "onChange"> {
 	label: string,
 	defaultValue: number,
 	min: number,

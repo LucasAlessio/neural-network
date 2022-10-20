@@ -24,6 +24,7 @@ export const WeightsContainer = styled.div`
 
 	ul {
 		display: flex;
+		padding: 0;
 		width: 100%;
 		height: 100%;
 		margin: 0;

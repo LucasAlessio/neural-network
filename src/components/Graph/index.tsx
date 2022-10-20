@@ -6,29 +6,33 @@ export function Graph() {
 
 	return (
 		<>
-			<span>Épocas: { epochs }</span>
+			<ResponsiveContainer aspect={ 1.77 }>
+				<LineChart
+					width={ 500 }
+					height={ 300 }
+					data={ chartData }
+					margin={{
+						top: 0,
+						right: 0,
+						left: 0,
+						bottom: 0,
+					}} >
+					<CartesianGrid strokeDasharray="3 3" />
+					<XAxis dataKey="name" />
+					<YAxis />
+					<Tooltip />
+					<Legend />
+					<Line
+						type="monotone"
+						dataKey="errors"
+						stroke="#8884d8"
+						activeDot={{ r: 8 }}
+						dot={ false }
+						isAnimationActive={ false } />
+				</LineChart>
+			</ResponsiveContainer>
 
-			<div style={{ width: "100%", height: "300px", border: "1px dotted #000"}}>
-				<ResponsiveContainer width="100%">
-					<LineChart
-						width={ 500 }
-						height={ 300 }
-						data={ chartData }
-						margin={{
-							top: 5,
-							right: 30,
-							left: 20,
-							bottom: 5,
-						}}>
-						<CartesianGrid strokeDasharray="3 3" />
-						<XAxis dataKey="name" />
-						<YAxis />
-						<Tooltip />
-						<Legend />
-						<Line type="monotone" dataKey="errors" textRendering="teste" stroke="#8884d8" activeDot={{ r: 8 }} isAnimationActive={ false } />
-					</LineChart>
-				</ResponsiveContainer>
-			</div>
+			<p className="mt-5 text-center text-muted">Epochs: { epochs }</p>
 		</>
 	)
 }

@@ -18,12 +18,10 @@ const StyledTextField = styled(TextField) (({ theme }) => ({
 		transform: 'translate(14px, 10px) scale(1)',
 	},
 	'label.MuiInputLabel-shrink': {
-		marginTop: '2px',
 		transform: 'translate(14px,-9px) scale(0.75)',
 	},
 	'label.Mui-focused': {
 		color: '#558aab',
-		marginTop: '2px',
 
 		'&.Mui-error': {
 			color: '#d32f2f',
@@ -60,7 +58,6 @@ const StyledTextField = styled(TextField) (({ theme }) => ({
 		color: '#d32f2f',
 	}
 }));
-
 
 export const STextField = forwardRef<HTMLInputElement, STextFieldProps>(({ label, fullWidth, icon, error, readonly, ...props }: STextFieldProps, ref) => {
 	return (

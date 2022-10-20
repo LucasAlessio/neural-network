@@ -7,11 +7,12 @@ interface SButtonProps {
 	onClick?: (event: MouseEvent<HTMLElement>) => void,
 	disabled?: boolean,
 	children: ReactNode,
+	style?: Record<string, string>,
 }
 
 const StyledButton = styled(Button) (({ variant }) => ({
 	fontFamily: 'inherit',
-	fontSize: '1.4rem',
+	fontSize: '1rem',
 	fontWeight: '400',
 	lineHeight: variant === 'contained' ? '40px' : '38px',
 	color: variant === 'contained' ? '#fff' : '#558aab',
@@ -29,9 +30,9 @@ const StyledButton = styled(Button) (({ variant }) => ({
 	},
 }));
 
-export function SButton({variant, onClick, disabled, children}: SButtonProps) {
+export function SButton({variant, onClick, disabled, children, ...props}: SButtonProps) {
 	return (
-		<StyledButton variant={variant} onClick={onClick} disabled={disabled}>
+		<StyledButton variant={variant} onClick={onClick} disabled={disabled} {...props}>
 			{children}
 		</StyledButton>
 	);
