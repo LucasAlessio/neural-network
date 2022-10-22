@@ -1,7 +1,9 @@
 import { faMagnifyingGlassChart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ClassEnum, getClassEnumDefinitions } from "../../enums/ClassEnum";
 import { useNeuralNetwork } from "../../hooks/useNeuralNetwork"
 import { SButton } from "../Form/SButton";
+import { CharContainer, CharSpacer, VerticalChar, VerticalContainer, VerticalTh } from "./styles";
 
 export function ConfusionMatrix() {
 	const { test, isTraining, confusionMatrix } = useNeuralNetwork();
@@ -21,15 +23,45 @@ export function ConfusionMatrix() {
 			{ !!confusionMatrix && (
 				<table className="table table-bordered table-striped table-sm">
 					<tbody>
-						{ confusionMatrix.map((linha, indexLinha) => {
+						{ confusionMatrix.map((row, indexRow) => {
 							return (
-								<tr key={`l${indexLinha}`}>
-									{ linha.map((coluna, indexColuna) => {
-										return (
-											<td key={`l${indexColuna}`} className="text-center">{ coluna }</td>
-										);
-									}) }
-								</tr>
+								<>
+									{ indexRow === 0 && (
+										<tr>
+											<td>&nbsp;</td>
+											{ [...new Array(confusionMatrix[0].length)].map((_, indexCol) => {
+												return (
+													<VerticalTh key={`c${indexCol}`} className="text-muted">
+														<VerticalContainer>
+														{ getClassEnumDefinitions()[(indexCol + 1) as typeof ClassEnum[keyof typeof ClassEnum]].split("").reverse().map((letter) => {
+															return 	(
+																<CharSpacer>
+																	<CharContainer>
+																		<VerticalChar>
+																			{ letter }
+																		</VerticalChar>
+																	</CharContainer>
+																</CharSpacer>
+															);
+														}) }
+														</VerticalContainer>
+													</VerticalTh>
+												)
+											}) }
+										</tr>
+										)
+									}
+
+									<tr key={`l${indexRow}`}>
+										<th className="text-end text-muted">{ getClassEnumDefinitions()[(indexRow + 1) as typeof ClassEnum[keyof typeof ClassEnum]] }</th>
+
+										{ row.map((col, indexCol) => {
+											return (
+												<td key={`l${indexCol}`} className="text-center">{ col }</td>
+											);
+										}) }
+									</tr>
+								</>
 							)
 						}) }
 					</tbody>
