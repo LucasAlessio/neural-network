@@ -1,5 +1,12 @@
 import styled from "styled-components";
 
+export const ConfusionMatrixTable = styled.table`
+	th {
+		font-size: 0.65rem;
+	}
+	vertical-align: middle;
+`;
+
 export const VerticalTh = styled.th`
 	vertical-align: bottom;
 	min-width: 2.06725rem;

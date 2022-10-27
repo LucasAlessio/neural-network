@@ -59,6 +59,8 @@ export function NeuralNetworkProvider({ children }: { children: React.ReactNode 
 	const biggestOutput = useRef<number>(-1);
 	const perceptronOutput = useRef<number>(-1);
 
+	const errors = useRef<number>(0);
+
 	const mount = useCallback(() => {
 		const newNetwork: Perceptron[][] = [];
 
@@ -226,6 +228,8 @@ export function NeuralNetworkProvider({ children }: { children: React.ReactNode 
 					perceptronOutput.current = indexPerceptron;
 					biggestOutput.current = perceptron.output;
 				}
+
+				errors.current += Math.abs(perceptron.error);
 			});
 
 			if (internalNetwork.current[config.layers.length - 1][perceptronOutput.current].expectedOutput === 0) {
@@ -243,7 +247,7 @@ export function NeuralNetworkProvider({ children }: { children: React.ReactNode 
 					...chartData,
 					{
 						epoch: epochs,
-						errors: errorsAmount.current,
+						errors: Number(errors.current.toFixed(2)),
 					}
 				]);
 
@@ -252,6 +256,7 @@ export function NeuralNetworkProvider({ children }: { children: React.ReactNode 
 				}
 
 				errorsAmount.current = 0;
+				errors.current = 0;
 			}
 		}
 	}, [chartData, config.layers.length, config.learning_rate, epochs, isTesting]);

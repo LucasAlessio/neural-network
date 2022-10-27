@@ -4,13 +4,26 @@ import { useNeuralNetwork } from "../../hooks/useNeuralNetwork";
 export function Graph() {
 	const { epochs, chartData } = useNeuralNetwork();
 
+	const maxError = chartData.reduce((acc, value, index) => {
+		return value.errors > acc ? value.errors : acc;
+	}, 0);
+
+	const newChartData = [
+		...chartData.slice(-100),
+		...Array.from({ length: 100 - chartData.length }, () => ({
+			error: 0,
+			epoch: 0,
+		})),
+		
+	]
+
 	return (
 		<>
 			<ResponsiveContainer aspect={ 1.77 }>
 				<LineChart
 					width={ 500 }
 					height={ 300 }
-					data={ chartData }
+					data={ newChartData }
 					margin={{
 						top: 0,
 						right: 0,
@@ -19,13 +32,14 @@ export function Graph() {
 					}} >
 					<CartesianGrid strokeDasharray="3 3" />
 					<XAxis dataKey="name" />
-					<YAxis />
+					<YAxis domain={[0, maxError + 10]} allowDataOverflow={true} />
 					<Tooltip />
 					<Legend />
 					<Line
+						strokeWidth={2}
 						type="monotone"
 						dataKey="errors"
-						stroke="#8884d8"
+						stroke="#558aab"
 						activeDot={{ r: 8 }}
 						dot={ false }
 						isAnimationActive={ false } />
