@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { faMagnifyingGlassChart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ClassEnum, getClassEnumDefinitions } from "../../enums/ClassEnum";
@@ -26,27 +27,13 @@ export function ConfusionMatrix() {
 						<tbody>
 							{ confusionMatrix.map((row, indexRow) => {
 								return (
-									<>
+									<Fragment key={indexRow}>
 										{ indexRow === 0 && (
 											<tr>
 												<td>&nbsp;</td>
 												{ [...new Array(confusionMatrix[0].length)].map((_, indexCol) => {
 													return (
-														<VerticalTh key={`c${indexCol}`} className="text-muted">
-															<VerticalContainer>
-															{ getClassEnumDefinitions()[(indexCol + 1) as typeof ClassEnum[keyof typeof ClassEnum]].split("").reverse().map((letter) => {
-																return 	(
-																	<CharSpacer>
-																		<CharContainer>
-																			<VerticalChar>
-																				{ letter }
-																			</VerticalChar>
-																		</CharContainer>
-																	</CharSpacer>
-																);
-															}) }
-															</VerticalContainer>
-														</VerticalTh>
+														<VerticalHeader indexCol={indexCol + 1 as typeof ClassEnum[keyof typeof ClassEnum]} />
 													)
 												}) }
 											</tr>
@@ -62,7 +49,7 @@ export function ConfusionMatrix() {
 												);
 											}) }
 										</tr>
-									</>
+									</Fragment>
 								)
 							}) }
 						</tbody>
@@ -70,5 +57,25 @@ export function ConfusionMatrix() {
 				</div>
 			) }
 		</div>
+	);
+}
+
+function VerticalHeader({ indexCol }: { indexCol: typeof ClassEnum[keyof typeof ClassEnum]}) {
+	return (
+		<VerticalTh key={`c${indexCol}`} className="text-muted">
+			<VerticalContainer>
+			{ getClassEnumDefinitions()[indexCol].split("").reverse().map((letter) => {
+				return 	(
+					<CharSpacer>
+						<CharContainer>
+							<VerticalChar>
+								{ letter }
+							</VerticalChar>
+						</CharContainer>
+					</CharSpacer>
+				);
+			}) }
+			</VerticalContainer>
+		</VerticalTh>
 	);
 }

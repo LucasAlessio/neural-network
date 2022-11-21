@@ -5,7 +5,7 @@ import { LayerTypeEnum } from "../enums/LayerTypeEnum";
 
 import trainData from "../dataset/test.json";
 import testData from "../dataset/train.json";
-import { ConfigNeuralNetwork } from "../types";
+import { ChartData, ConfigNeuralNetwork } from "../types";
 
 type NeuralNetworkData = {
 	config: ConfigNeuralNetwork,
@@ -23,10 +23,7 @@ type NeuralNetworkData = {
 	chartData: ChartData,
 };
 
-type ChartData = {
-	epoch: number,
-	errors: number,
-}[];
+export const N_CHART_EPOCHS = 100;
 
 const NeuralNetworkContext = createContext<NeuralNetworkData>({} as NeuralNetworkData);
 
@@ -243,11 +240,13 @@ export function NeuralNetworkProvider({ children }: { children: React.ReactNode 
 			});
 
 			if (index === trainData.length - 1) {
+				const [,...newChartData] = chartData;
+
 				setChartData([
-					...chartData,
+					...(chartData.length >= N_CHART_EPOCHS ? newChartData : chartData),
 					{
-						epoch: epochs,
-						errors: Number(errors.current.toFixed(2)),
+						epoch: epochs + 1,
+						error: Number(errors.current.toFixed(2)),
 					}
 				]);
 

@@ -5,17 +5,20 @@ export function Graph() {
 	const { epochs, chartData } = useNeuralNetwork();
 
 	const maxError = chartData.reduce((acc, value, index) => {
-		return value.errors > acc ? value.errors : acc;
-	}, 0);
+		if (value.error === null) return 0;
+
+		return value.error > acc ? value.error : acc;
+	}, 0) + 10;
 
 	const newChartData = [
 		...chartData.slice(-100),
-		...Array.from({ length: 100 - chartData.length }, () => ({
-			error: 0,
-			epoch: 0,
+		...Array.from({ length: 100 - chartData.length }, (_, index) => ({
+			error: null,
+			epoch: chartData.length + index + 1,
 		})),
-		
-	]
+	];
+
+	const ticks = newChartData.filter(({ epoch }) => epoch % 10 === 0).map(({ epoch }) => epoch);
 
 	return (
 		<>
@@ -31,14 +34,15 @@ export function Graph() {
 						bottom: 0,
 					}} >
 					<CartesianGrid strokeDasharray="3 3" />
-					<XAxis dataKey="name" />
-					<YAxis domain={[0, maxError + 10]} allowDataOverflow={true} />
-					<Tooltip />
+					<XAxis dataKey="epoch" ticks={ticks} tick={<CustomizedAxisTick />} interval={0} tickCount={5} />
+					<YAxis domain={[0, Math.floor(maxError)]} allowDataOverflow={true} />
+					<Tooltip labelFormatter={(v) => `Epoch: ${v}`} />
 					<Legend />
 					<Line
+						name="Total error"
 						strokeWidth={2}
 						type="monotone"
-						dataKey="errors"
+						dataKey="error"
 						stroke="#558aab"
 						activeDot={{ r: 8 }}
 						dot={ false }
@@ -56,4 +60,16 @@ export function Graph() {
 			</table>
 		</>
 	)
+}
+
+function CustomizedAxisTick(props: any) {
+	const { x, y, payload: { value } } = props;
+
+	return (
+		<g transform={`translate(${x},${y})`}>
+			<text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35), scale(.75)">
+				{ value }
+			</text>
+		</g>
+	);
 }
